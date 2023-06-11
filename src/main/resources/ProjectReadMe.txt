@@ -12,6 +12,7 @@ Endpoints:
 		
 	/activation
 		-	Endpoint for userprofile activation and password creation of user. 
+		DB SChema: USerId, ActivationToken, isValid, createdAt
 		
 	/changepassword 
 		- Endpoint if user wants to update its password. 

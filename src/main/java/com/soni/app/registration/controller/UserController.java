@@ -23,31 +23,37 @@ public class UserController {
 
 	@Autowired
 	UserDTO userDto;
-	
+
 	@GetMapping("/user")
 	public ResponseEntity<List<User>> getUser() {
-	
+
 		return new ResponseEntity<List<User>>(userDto.findAll(), HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/user/{userId}")
 	public ResponseEntity<User> getUserById(@PathVariable UUID userId) {
-		Optional<User> user=userDto.findById(userId);
-		if(user.isPresent()) {
-			User userResult=user.get();
+		Optional<User> user = userDto.findById(userId);
+		if (user.isPresent()) {
+			User userResult = user.get();
 			return new ResponseEntity<>(userResult, HttpStatus.OK);
-		}
-		else {
+		} else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 
 	}
 
 	@PostMapping("/user")
-	public ResponseEntity<User> createUser(@RequestBody User reqUser){
+	public ResponseEntity<String> createUser(@RequestBody User reqUser) {
 
-		return new ResponseEntity<User>(userDto.save(reqUser),HttpStatus.CREATED);
+		if (userDto.findByEmailId(reqUser.getEmailId()).isEmpty()
+				&& userDto.findByPhone(reqUser.getPhone()).isEmpty()) {
+			User savedUser = userDto.save(reqUser);
+			return new ResponseEntity<String>(savedUser.getUserID().toString(), HttpStatus.CREATED);
+		} else {
+			return new ResponseEntity<String>("Error: EmailID or Phone Already registerred in System ",
+					HttpStatus.PRECONDITION_FAILED);
+		}
+
 	}
-	
-	
+
 }
